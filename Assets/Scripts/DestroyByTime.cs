@@ -3,11 +3,13 @@ using System.Collections;
 
 public class DestroyByTime : MonoBehaviour
 {
-    public float lifetime;
-
     void Start()
     {
-       
-        Destroy(gameObject, lifetime);
+        StartCoroutine(SelfDestruct());
+    }
+    IEnumerator SelfDestruct()
+    {
+        yield return new WaitForSeconds(3f);
+        Destroy(gameObject);
     }
 }

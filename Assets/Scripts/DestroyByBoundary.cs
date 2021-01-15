@@ -41,6 +41,10 @@ public class DestroyByBoundary : MonoBehaviour
         {
             return;
         }
+        if (other.tag == "Enemy")
+        {
+            return;
+        }
         if (other.tag == "Player")
         {
             Destroy(other.gameObject);

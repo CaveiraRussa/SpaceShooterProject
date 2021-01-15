@@ -1,13 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 // controla todo o jogo
 public class GameController : MonoBehaviour {
     public GameObject[] hazards;
+    public GameObject[] enemys;
+
     private Vector2 spawnValues;
     public int hazardCount;
+    public int enemyCount;
     public float spawnWait;
     public float startWait;
     public float waveWait;
@@ -92,9 +94,12 @@ public class GameController : MonoBehaviour {
             for (int i = 0; i < hazardCount; i++) // iniciar a criação dos asteroids e mantem eles sendo spammados na area definida
             {
                 GameObject hazard = hazards[Random.Range(0, hazards.Length)];
-                Vector2 spawnPosition = new Vector2(Random.Range(-18, 21), 21); // seta a area definida
+                GameObject Enemys = enemys[Random.Range(0, enemys.Length)];
+                Vector2 spawnPosition = new Vector2(Random.Range(-18, 21), 520); // seta a area definida
+                Vector2 spawnEnemyPosition = new Vector2(Random.Range(-18, 21), -20); // seta a area definida
                 Quaternion spawnRotation = Quaternion.identity;
-                Instantiate(hazard, spawnPosition, spawnRotation); // cria eles
+                Instantiate(hazard, spawnPosition, spawnRotation);
+                Instantiate(Enemys, spawnEnemyPosition, spawnRotation);// cria eles
                 yield return new WaitForSeconds(spawnWait); // cooldown de criação
             }
             yield return new WaitForSeconds(waveWait);
