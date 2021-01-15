@@ -13,14 +13,12 @@ public class EnemyAI : MonoBehaviour
     private float nextFire;
     private Transform player;
     public float moveSpeed;
-    private Rigidbody2D rb2D;
     public float manoverRate;
     private float nextManover;
     private bool doABarrelRoll;
     private bool flip;
     private bool highlander;
-    private int side;
-    private int sideSpeed = 10;
+
     public GameObject explosion;
     [SerializeField] private Collider2D immortal;
 
@@ -33,13 +31,11 @@ public class EnemyAI : MonoBehaviour
             Debug.Log("Cannot find 'player' script");
         }
         animator = GetComponent<Animator>();
-        rb2D = GetComponent<Rigidbody2D>();
         giro = false;
         sentido = true;
         posicaoInicial = transform.rotation;
         flip = false;
         highlander = true;
-        side = 2;
     }
     void FixedUpdate()
     {
@@ -112,6 +108,7 @@ public class EnemyAI : MonoBehaviour
         {
             if ((transform.rotation.y == 1 || transform.rotation.y == -1) && flip == true && sentido==true)
             {
+                Debug.Log("Entrou na parada 1");
                 transform.Rotate(Vector3.up * 0);
                 Vector3 eulerRotation = transform.rotation.eulerAngles;
                 transform.rotation = Quaternion.Euler(eulerRotation.x, 0, eulerRotation.z);
@@ -122,6 +119,7 @@ public class EnemyAI : MonoBehaviour
             }
             if ((transform.rotation.y >= -0.01 && transform.rotation.y < 0) && flip == true && sentido == false)
             {
+                Debug.Log("Entrou na parada 0");
                 transform.Rotate(Vector3.up * 0);
                 Vector3 eulerRotation = transform.rotation.eulerAngles;
                 transform.rotation = Quaternion.Euler(eulerRotation.x, 0, eulerRotation.z); 
@@ -132,6 +130,7 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
+                Debug.Log("Entrou o immortal");
                 LetDie();
                 transform.Rotate(Vector3.up * smooth);
                 flip = true;
@@ -142,26 +141,18 @@ public class EnemyAI : MonoBehaviour
             SetImmortal();
         }
         var step = moveSpeed * Time.deltaTime;
-        var away = (-1* moveSpeed) * Time.deltaTime;
-        if (side == 1)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, player.position, step);
-        }
-        if (side ==2)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, player.position, step);
-        }
-        if (side == 3)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, player.position, step);
-        }
+        transform.position = Vector3.MoveTowards(transform.position, player.position, step);
+
     }
     public void DoABarrelRoll() // ao entrar no trigger
     {
+        Debug.Log("Entrou na função");
         if (giro == false)
         {
+            Debug.Log("Entrou no 1 if");
             if (Time.time > nextManover)
             {
+                Debug.Log("Entrou no 2 if");
                 nextManover = Time.time + manoverRate;
                 doABarrelRoll = true;
             }
@@ -173,30 +164,24 @@ public class EnemyAI : MonoBehaviour
     }
     void SetImmortal() // animação do ataque saindo
     {
+        Debug.Log("Who wants to live forever");
         highlander = true;
         immortal.enabled = true;
     }
     void LetDie() // animação do ataque saindo
     {
+        Debug.Log("To live and let die");
         highlander = false;
         immortal.enabled = false;
     }
-    public void SetSide(int lado)
-    {
-        side = lado;
-    }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Enemy" || other.tag == "Hazard")
-        {
-            HitDirection(other);
-        }
-
         if (other.tag == "PlayerAttack")
         {
             DoABarrelRoll();
             if (doABarrelRoll)
             {
+                Debug.Log("entrou no return");
                 return;
             }
             else
@@ -207,38 +192,5 @@ public class EnemyAI : MonoBehaviour
         }
 
     }
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.tag == "Enemy" || collision.tag == "Hazard")
-        {
-            ExitDirection(collision);
-        }
-    }
 
-    private void HitDirection(Collider2D collision)
-    {
-        if (transform.position.x - collision.transform.position.x > 0)
-        {
-            Debug.Log("Esquerda");
-            SetSide(1);
-        }
-        if (transform.position.x - collision.transform.position.x < 0)
-        {
-            Debug.Log("Direita");
-            SetSide(3);
-        }
-    }
-    private void ExitDirection(Collider2D collision)
-    {
-        if (transform.position.x - collision.transform.position.x > 0)
-        {
-            Debug.Log("Esquerda");
-            SetSide(2);
-        }
-        if (transform.position.x - collision.transform.position.x < 0)
-        {
-            SetSide(2);
-            Debug.Log("Direita");
-        }
-    }
 }

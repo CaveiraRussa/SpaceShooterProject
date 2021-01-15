@@ -24,11 +24,21 @@ public class PlayerController : MonoBehaviour
     // public float fireRateS;
     //private bool specialAtk;
     //public Text specialText;
-
+    private GameController gameController;
+    public GameObject playerExplosion;
     private float nextFire;
    // private float nextFireS;
     void Start() // starta buscando o componentes
     {
+        GameObject gameControllerObject = GameObject.FindWithTag("GameController");
+        if (gameControllerObject != null)
+        {
+            gameController = gameControllerObject.GetComponent<GameController>();
+        }
+        if (gameController == null)
+        {
+            Debug.Log("Cannot find 'GameController' script");
+        }
         animator = GetComponent<Animator>();
         SpriteRenderer = GetComponent<SpriteRenderer>();
         rb2d = GetComponent<Rigidbody2D>();
@@ -142,8 +152,17 @@ public class PlayerController : MonoBehaviour
     }
     //public void Special()
     //{
-        //specialText.text = "Special Ready";
-        //specialAtk = true;
+    //specialText.text = "Special Ready";
+    //specialAtk = true;
     //}
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "EnemyAttack" || other.tag == "Hazard")
+        {
+            Instantiate(playerExplosion, transform.position, transform.rotation);
+            Destroy(gameObject);
+            gameController.GameOver();
+        }
 
+    }
 }

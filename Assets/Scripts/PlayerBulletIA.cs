@@ -52,8 +52,13 @@ public class PlayerBulletIA : MonoBehaviour
         }
         if (other.tag == "Enemy")
         {
-            Instantiate(explosion, other.transform.position, other.transform.rotation);
-            Destroy(other.gameObject);
+            return;
+
+        }
+        if (other.tag == "Hazard")
+        {
+            //Instantiate(explosion, other.transform.position, other.transform.rotation);
+            //Destroy(other.gameObject);
             return;
 
         }
