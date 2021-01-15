@@ -52,15 +52,15 @@ public class PlayerBulletIA : MonoBehaviour
         }
         if (other.tag == "Enemy")
         {
-            //Instantiate(explosion, other.transform.position, other.transform.rotation);
-            //Destroy(other.gameObject);
+            Instantiate(explosion, other.transform.position, other.transform.rotation);
+            Destroy(other.gameObject);
             return;
 
         }
         if (other.tag == "EnemyAttack")
         {
-            //Destroy(other.gameObject);
-            //Destroy(gameObject);
+            Destroy(other.gameObject);
+            Destroy(gameObject);
             return;
 
         }

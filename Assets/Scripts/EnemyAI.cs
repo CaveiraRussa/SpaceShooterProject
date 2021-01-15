@@ -21,6 +21,7 @@ public class EnemyAI : MonoBehaviour
     private bool highlander;
     private int side;
     private int sideSpeed = 10;
+    public GameObject explosion;
     [SerializeField] private Collider2D immortal;
 
     // Start is called before the first frame update
@@ -51,7 +52,7 @@ public class EnemyAI : MonoBehaviour
                 if (Time.time > nextFire)
                 {
                     nextFire = Time.time + fireRate;
-                    Instantiate(shot, shotSpawn.position, Quaternion.identity);
+                    Instantiate(shot, shotSpawn.position, transform.rotation);
                     animacaoAtaque();
                     GetComponent<AudioSource>().Play();
                 }
@@ -77,7 +78,6 @@ public class EnemyAI : MonoBehaviour
             {
                 if (sentido)
                 {
-                    Debug.Log(sentido);
                     if (transform.rotation.z >=0.9 && transform.rotation.z < 1|| (transform.rotation.z == -1f || transform.rotation.z == 1f))
                     {
                         transform.Rotate(Vector3.back * 0);
@@ -142,18 +142,18 @@ public class EnemyAI : MonoBehaviour
             SetImmortal();
         }
         var step = moveSpeed * Time.deltaTime;
-        if(side == 1)
+        var away = (-1* moveSpeed) * Time.deltaTime;
+        if (side == 1)
         {
-            rb2D.velocity = transform.right * sideSpeed;
+            transform.position = Vector3.MoveTowards(transform.position, player.position, step);
         }
         if (side ==2)
         {
-            rb2D.velocity = transform.right * 0;
             transform.position = Vector3.MoveTowards(transform.position, player.position, step);
         }
         if (side == 3)
         {
-            rb2D.velocity = transform.right * (-1 * sideSpeed);
+            transform.position = Vector3.MoveTowards(transform.position, player.position, step);
         }
     }
     public void DoABarrelRoll() // ao entrar no trigger
@@ -201,6 +201,7 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
+                Instantiate(explosion, other.transform.position, other.transform.rotation);
                 Destroy(gameObject);
             }
         }
