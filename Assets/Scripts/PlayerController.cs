@@ -108,11 +108,9 @@ public class PlayerController : MonoBehaviour
                     Debug.Log(transform.rotation.z);
                     giro = false;
                     sentido = false;
-                    rb2d.velocity = movement * speed;
                 }
                 else
                 {
-                    rb2d.velocity = movement * 0;
                     transform.Rotate(Vector3.back * smooth);
                 }
             }
@@ -120,17 +118,15 @@ public class PlayerController : MonoBehaviour
             {
                 if (transform.rotation.z <= 0.01 && transform.rotation.z > 0)
                 {
-                        transform.Rotate(Vector3.back * 0);
+                    transform.Rotate(Vector3.back * 0);
                         giro = false;
                         sentido = true;
                         transform.rotation = posicaoInicial;
-                        rb2d.velocity = movement * speed;
 
 
                 }
                 else
                 {
-                    rb2d.velocity = movement * 0;
                     transform.Rotate(Vector3.back * smooth);
                 }
             }

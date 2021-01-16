@@ -61,7 +61,7 @@ public class DestroyCod : MonoBehaviour {
             Destroy(other.gameObject);
             gameController.GameOver();
         }
-        if (other.tag == "PlayerAttack")
+        if (other.tag == "PlayerAttack" || other.tag == "EnemyAttack")
         {
             Destroy(other.gameObject);
             Destroy(gameObject);

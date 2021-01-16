@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System.Collections;
 public class EnemyAI : MonoBehaviour
 {
     private float smooth = 5f;
@@ -18,6 +18,16 @@ public class EnemyAI : MonoBehaviour
     private bool doABarrelRoll;
     private bool flip;
     private bool highlander;
+    public float dodge;
+    public float smoothing;
+    public float tilt;
+    public Vector2 startWait;
+    public Vector2 maneuverTime;
+    public Vector2 maneuverWait;
+    public Vector2 maxXAndY;
+    public Vector2 minXAndY;        
+    private float targetManeuver;
+    private Rigidbody2D rb2d;
 
     public GameObject explosion;
     [SerializeField] private Collider2D immortal;
@@ -25,6 +35,7 @@ public class EnemyAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        rb2d = GetComponent<Rigidbody2D>();
         player = GameObject.FindWithTag("Player").transform; // testa se o objeto existe
         if (player == null)
         {
@@ -36,14 +47,23 @@ public class EnemyAI : MonoBehaviour
         posicaoInicial = transform.rotation;
         flip = false;
         highlander = true;
+        StartCoroutine(Evade());
     }
+
     void FixedUpdate()
     {
         Vector3 direction = player.position - transform.position;
-
+        float newManeuver = Mathf.MoveTowards(rb2d.velocity.x, targetManeuver, Time.deltaTime * smoothing);
+        rb2d.velocity = new Vector3(newManeuver, moveSpeed, 0.0f);
+        rb2d.position = new Vector3
+        (
+            Mathf.Clamp(rb2d.position.x, minXAndY.x, maxXAndY.x),
+            Mathf.Clamp(rb2d.position.y, minXAndY.y, maxXAndY.y),
+             0.0f
+        );
         if (giro == false)
         {
-            if ((direction.y < 20f && direction.y > -20f) && (direction.x < 10 && direction.x > -10))
+            if ((direction.y < 50f && direction.y > -50f) && (direction.x < 10 && direction.x > -10))
             {
                 if (Time.time > nextFire)
                 {
@@ -59,14 +79,17 @@ public class EnemyAI : MonoBehaviour
 
         if (direction.y < 0 && sentido == false)
         {
+            moveSpeed *= -1;
             giro = true;
             sentido = false;
         }
         if (direction.y > 0 && sentido == true)
         {
+            moveSpeed *= -1;
             giro = true;
             sentido = true;
         }
+
 
         if (giro)
         {
@@ -140,8 +163,8 @@ public class EnemyAI : MonoBehaviour
         {
             SetImmortal();
         }
-        var step = moveSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, player.position, step);
+        //var step = moveSpeed * Time.deltaTime;
+        //transform.position = Vector3.MoveTowards(transform.position, player.position, step);
 
     }
     public void DoABarrelRoll() // ao entrar no trigger
@@ -191,6 +214,18 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
+    }
+    IEnumerator Evade()
+    {
+        yield return new WaitForSeconds(Random.Range(startWait.x, startWait.y));
+
+        while (true)
+        {
+            targetManeuver = Random.Range(1, dodge) * -Mathf.Sign(transform.position.x);
+            yield return new WaitForSeconds(Random.Range(maneuverTime.x, maneuverTime.y));
+            targetManeuver = 0;
+            yield return new WaitForSeconds(Random.Range(maneuverWait.x, maneuverWait.y));
+        }
     }
 
 }
