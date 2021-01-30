@@ -18,7 +18,7 @@ public class DestroyByBoundary : MonoBehaviour
             Debug.Log("Cannot find 'GameController' script");
         }
     }
-    void OnTriggerExit2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Start")
         {
@@ -41,15 +41,14 @@ public class DestroyByBoundary : MonoBehaviour
         {
             return;
         }
-        if (other.tag == "Enemy")
+        if (other.tag == "Hazard")
         {
-            return;
+            Destroy(other.gameObject);
         }
         if (other.tag == "Player")
         {
             Destroy(other.gameObject);
             gameController.GameOver();
         }
-        Destroy(other.gameObject);
     }
 }

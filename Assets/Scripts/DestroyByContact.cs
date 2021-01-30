@@ -48,8 +48,7 @@ public class DestroyByContact : MonoBehaviour {
         if (other.tag == "Hazard")// Hazard são os meteoros
         {
             rb2D.AddForce(transform.up * thrust);
-
-
+            return;
         }
 
         if (other.tag == "PlayerAttack")

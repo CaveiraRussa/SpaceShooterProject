@@ -13,6 +13,9 @@ public class Spawn : MonoBehaviour
     public float waveWait;
     private GameController gameController;
     private bool endSpawn;
+    public int limit;
+    private bool isLimited;
+    private int enemyCount;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,7 +29,9 @@ public class Spawn : MonoBehaviour
             Debug.Log("Cannot find 'GameController' script");
         }
         StartCoroutine(SpawnWaves()); // iniciar o spawm dos inimigos
+        isLimited = false;
         endSpawn = false;
+        enemyCount = 0;
     }
 
     // Update is called once per frame
@@ -37,11 +42,15 @@ public class Spawn : MonoBehaviour
         {
             for (int i = 0; i < hazardCount; i++) // iniciar a criação dos asteroids e mantem eles sendo spammados na area definida
             {
-                GameObject hazard = hazards[Random.Range(0, hazards.Length)];
-                Vector2 spawnPosition = new Vector2(Random.Range(minXmaxX.x, minXmaxX.y), y); // seta a area definida
-                Quaternion spawnRotation = Quaternion.identity;
-                Instantiate(hazard, spawnPosition, spawnRotation); // cria eles
-                yield return new WaitForSeconds(spawnWait); // cooldown de criação
+                while (!isLimited)
+                {
+                    GameObject hazard = hazards[Random.Range(0, hazards.Length)];
+                    Vector2 spawnPosition = new Vector2(Random.Range(minXmaxX.x, minXmaxX.y), y); // seta a area definida
+                    Quaternion spawnRotation = Quaternion.identity;
+                    Instantiate(hazard, spawnPosition, spawnRotation); // cria eles
+                    enemyCount += 1;
+                    yield return new WaitForSeconds(spawnWait); // cooldown de criação
+                }
             }
             yield return new WaitForSeconds(waveWait);
         }
@@ -49,10 +58,21 @@ public class Spawn : MonoBehaviour
     void Update()
     {
         endSpawn = gameController.RaiseFlag();
+        if (limit > 0)
+        {
+            if (enemyCount >= limit)
+            {
+                SetLimit();
+            }
+        }
     }
 
     public void SetY(float move)
     {
         y = move;
+    }
+    private void SetLimit()
+    {
+        isLimited = true;
     }
 }
