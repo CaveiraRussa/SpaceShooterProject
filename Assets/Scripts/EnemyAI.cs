@@ -28,6 +28,8 @@ public class EnemyAI : MonoBehaviour
     public Vector2 minXAndY;        
     private float targetManeuver;
     private Rigidbody2D rb2d;
+    private GameController gameController;
+    public int scoreValue;
 
     public GameObject explosion;
     [SerializeField] private Collider2D immortal;
@@ -35,6 +37,15 @@ public class EnemyAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GameObject gameControllerObject = GameObject.FindWithTag("GameController"); // testa se o objeto existe
+        if (gameControllerObject != null)
+        {
+            gameController = gameControllerObject.GetComponent<GameController>();
+        }
+        if (gameController == null)
+        {
+            Debug.Log("Cannot find 'GameController' script");
+        }
         rb2d = GetComponent<Rigidbody2D>();
         player = GameObject.FindWithTag("Player").transform; // testa se o objeto existe
         if (player == null)
@@ -209,6 +220,7 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
+                gameController.AddScore(scoreValue);
                 Instantiate(explosion, other.transform.position, other.transform.rotation);
                 Destroy(gameObject);
             }
